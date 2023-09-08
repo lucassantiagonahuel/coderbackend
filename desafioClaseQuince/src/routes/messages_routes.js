@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
 router.post('/', async (req,res) =>{
     try {
         const response = await messageClass.addMessage();
+        res.send(response);
         
     } catch (error) {
         res.status(500).send(error.message);

@@ -28,6 +28,8 @@ const loadProductList = async () => {
 
   const deleteProduct = async (productId) => {
     try {
+      console.log("ID EN EL JS FRONT: ");
+      console.log(productId);
       const response = await fetch("/api/products/" + productId, {
         method: "DELETE",
       });
@@ -64,7 +66,7 @@ const loadProductList = async () => {
   productList.addEventListener("click", (event) => {
     if (event.target.classList.contains("delete-button")) {
       const button = event.target;
-      const productId = +button.getAttribute("data-product-id");
+      const productId = button.getAttribute("data-product-id");
       console.log("Eliminar producto con ID:", productId);
       deleteProduct(productId);
     }
@@ -77,7 +79,7 @@ const loadProductList = async () => {
       data.forEach((product) => {
         const listItem = document.createElement("li");
         listItem.innerHTML = `${product.title}
-        <button class="delete-button" data-product-id="${product.id}">Eliminar</button>`;
+        <button class="delete-button" data-product-id="${product._id}">Eliminar</button>`;
         productList.appendChild(listItem);
       });
     } else {

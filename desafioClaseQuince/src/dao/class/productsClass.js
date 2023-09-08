@@ -7,8 +7,7 @@ export class ProductClass {
   getProducts = async (limit = 0) => {
     let products = [];
     if (limit > 0) {
-      products = await productModel.find().limit(limit);;
-      console.log(products)
+      products = await productModel.find().limit(limit);
     }else{
 
       products = await productModel.find();
@@ -42,7 +41,6 @@ export class ProductClass {
 
   deleteProduct = async (idProd) => {
     const result = await productModel.deleteOne({_id : idProd});
-
     return result;
   };
 }
