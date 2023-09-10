@@ -4,8 +4,7 @@ export class MessageClass {
   constructor() {}
 
   getMessages = async () => {
-    const response = await messageModel.find();
-    return response;
+    return messageModel.find();
   };
 
   addMessage = async (message) => {

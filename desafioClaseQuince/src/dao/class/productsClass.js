@@ -5,14 +5,14 @@ export class ProductClass {
   //constructor() {}
 
   getProducts = async (limit = 0) => {
-    let products = [];
+    //let products = [];
     if (limit > 0) {
-      products = await productModel.find().limit(limit);
+      return productModel.find().limit(limit);
     }else{
 
-      products = await productModel.find();
+      return productModel.find();
     }
-    return products;
+    //return products;
   };
 
   getProductById = async (idProduct) => {
@@ -35,12 +35,11 @@ export class ProductClass {
 
     const urlsCreated = urlCreator(imagesFiles);
     prodUpgrade.thumbnails = urlsCreated;
-    const result = await productModel.updateOne({_id : idProd},prodUpgrade);
-    return result;
+    return productModel.updateOne({_id : idProd},prodUpgrade);
+
   };
 
   deleteProduct = async (idProd) => {
-    const result = await productModel.deleteOne({_id : idProd});
-    return result;
+    return productModel.deleteOne({_id : idProd});
   };
 }

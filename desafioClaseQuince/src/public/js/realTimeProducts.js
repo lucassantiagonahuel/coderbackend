@@ -9,70 +9,74 @@ if (!productList) {
     document.body.appendChild(productList);
   }
 
-const loadProductList = async () => {
+
+  const loadProductList = async () => {
     try {
-      const updatedResponse = await fetch("/api/products", {
-        method: "GET",
-      });
-  
-      if (updatedResponse.ok) {
-        const data = await updatedResponse.json();
-        socket.emit("sendData", data);
-      } else {
-        console.error("Error al obtener datos actualizados");
-      }
+      const data = await fetchProductData();
+      socket.emit("sendData", data);
     } catch (error) {
-      console.error("Error al realizar la solicitud GET:", error);
+      console.error("Error al obtener datos actualizados:", error);
     }
+  };
+
+  const fetchProductData = async () => {
+    const response = await fetch("/api/products", {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al obtener datos actualizados");
+    }
+
+    return response.json();
   };
 
   const deleteProduct = async (productId) => {
     try {
-      console.log("ID EN EL JS FRONT: ");
-      console.log(productId);
-      const response = await fetch("/api/products/" + productId, {
+      await fetch(`/api/products/${productId}`, {
         method: "DELETE",
       });
-  
-      if (response.ok) {
-        loadProductList();
-      } else {
-        console.error("Error al eliminar el producto");
-      }
+      loadProductList();
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error al eliminar el producto:", error);
     }
   };
 
-  productForm.addEventListener("submit", async (evt) => {
-    evt.preventDefault();
-    try {
-      const response = await fetch("/api/products", {
-        method: "POST",
-        body: new FormData(productForm),
-      });
-  
-      if (response.ok) {
-        loadProductList();
-        productForm.reset();
-      } else {
-        console.error("Error al enviar el formulario");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  });
 
-  productList.addEventListener("click", (event) => {
+  const handleFormSubmit = (evt) => {
+    evt.preventDefault();
+  
+    fetch("/api/products", {
+      method: "POST",
+      body: new FormData(productForm),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return loadProductList();
+        } else {
+          console.error("Error al enviar el formulario");
+        }
+      })
+      .catch((error) => {
+        console.error("Error al enviar el formulario:", error);
+      });
+  };
+  
+
+  const handleProductListClick = (event) => {
     if (event.target.classList.contains("delete-button")) {
       const button = event.target;
       const productId = button.getAttribute("data-product-id");
       console.log("Eliminar producto con ID:", productId);
       deleteProduct(productId);
     }
-  });
+  };
 
   socket.on("updateList", (data) => {
+    updateProductList(data);
+  });
+
+  const updateProductList = (data) => {
     const dataIsEmpty = data.length === 0;
     if (!dataIsEmpty) {
       productList.innerHTML = "";
@@ -85,8 +89,11 @@ const loadProductList = async () => {
     } else {
       productList.innerHTML = "No hay productos cargados";
     }
-  });
-  
+  };
+
+  productForm.addEventListener("submit", handleFormSubmit);
+  productList.addEventListener("click", handleProductListClick);
+
   loadProductList();
 
 });
