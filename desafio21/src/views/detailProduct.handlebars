@@ -1,0 +1,18 @@
+<div>
+  <h1>Detalle de Producto</h1>
+  <ul>
+    <li>
+      <h2>{{product.title}}</h2>
+      <p>Descripción: {{product.description}}</p>
+      <p>Precio: ${{product.price}}</p>
+      <p>Stock Disponible: {{product.stock}}</p>
+      {{#each product.thumbnails}}
+        <img src="{{this}}" alt="Imagen del producto">
+      {{/each}}
+      <button onclick="addToCart(`{{product._id}}`)" data-product-id="{{product._id}}">Agregar al carrito</button>
+    </li>
+  </ul>
+  <a href="javascript:history.back()"><button>Volver atrás</button></a>
+</div>
+
+<script src="/static/js/products.js"></script>
