@@ -1,0 +1,96 @@
+import __dirname from "../utils/utils.js";
+import productsService from "../service/productsService.js";
+import CustomError from "../service/errors/CustomError.js";
+import EErrors from "../service/errors/enums.js"
+import {generateUserErrorInfo} from "../service/errors/info.js"
+
+const getProducts = async (req, res) => {
+  try {
+    const { limit, page, sort, ...filters } = req.query;
+    const products = await productsService.getProducts(
+      filters,
+      sort,
+      limit,
+      page
+    );
+    res.send(products);
+  } catch (error) {
+    console.error(error);
+    res.status(error.status).send("Error al cargar los productos");
+  }
+};
+
+const getProductById = async (req, res) => {
+  try {
+    const prodId = req.params.pid;
+    const product = await productsService.getProductById(prodId);
+    res.send(product);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+const createProduct = async (req, res) => {
+  try {
+    const prod = req.body;
+    const imagesFiles = req.files;
+    if (!prod.code) {
+      CustomError.createError({
+        name: "Product error",
+        cause: generateUserErrorInfo({prod}),
+        message:"Error al crear el producto desde diccionario",
+        code: EErrors.INVALID_TYPES_ERROR
+      })
+    }
+    const response = await productsService.addProduct(prod, imagesFiles);
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+const updateProduct = async (req, res) => {
+  try {
+    const prodId = req.params.pid;
+    const prodUpgrade = req.body;
+    const imagesFiles = req.files;
+    const response = await productsService.updateProduct(
+      prodId,
+      prodUpgrade,
+      imagesFiles
+    );
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const prodId = req.params.pid;
+    const response = await productsService.deleteProduct(prodId);
+    res.send(response);
+  } catch (error) {
+    res.status(error.status).send(error.message);
+  }
+};
+
+const createMock = async (req, res) => {
+  try {
+    const response = await productsService.createMock();
+    req.logger.info(`Create products for mocks!`);
+    res.send(response);
+  } catch (error) {
+    req.logger.error(`Error in creation products mocks ${error}`)
+    res.status(error.status).send(error.message);
+  }
+};
+
+export default {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  createMock,
+};
