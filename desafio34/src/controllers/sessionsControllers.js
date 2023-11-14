@@ -1,6 +1,7 @@
 import { generateToken } from "../utils/auth.js";
 
 const register = async (req, res) => {
+  req.logger.info(`User registered ok!`);
   res.send({ status: "Success", message: "User registered ok" });
 };
 
@@ -15,6 +16,7 @@ const login = async (req, res) => {
   //   rol: req.user.rol,
   // };
   const access_token = generateToken(req.user);
+  req.logger.info(`Usuario logueado correctamente!`);
   res
     .cookie("coderCookieToken", access_token, {
       maxAge: 60 * 60 * 1000,

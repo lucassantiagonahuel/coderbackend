@@ -1,6 +1,6 @@
 import winston from "winston";
 
-const enviroment = process.env.ENVIROMENT;
+const environment = process.env.ENVIRONMENT;
 let logger;
 const customLevelOptions = {
   levels: {
@@ -22,6 +22,7 @@ const customLevelOptions = {
 };
 
 const devLogger = winston.createLogger({
+  levels: customLevelOptions.levels,
   transports: [
     new winston.transports.Console({
       level: "debug",
@@ -34,6 +35,7 @@ const devLogger = winston.createLogger({
 });
 
 const prodLogger = winston.createLogger({
+  levels: customLevelOptions.levels,
   transports: [
     new winston.transports.Console({
       level: "info",
@@ -50,12 +52,12 @@ const prodLogger = winston.createLogger({
   ],
 });
 
-if (enviroment === "dev") {
+if (environment === "dev") {
   logger = devLogger;
 } else {
   logger = prodLogger;
 }
-console.log(enviroment);
+console.log(environment);
 export const addLogger = (req, res, next) => {
   req.logger = logger;
   req.logger.http(

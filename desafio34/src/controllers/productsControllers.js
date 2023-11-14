@@ -15,7 +15,7 @@ const getProducts = async (req, res) => {
     );
     res.send(products);
   } catch (error) {
-    console.error(error);
+    req.logger.error(`Error al cargar los productos!`);
     res.status(error.status).send("Error al cargar los productos");
   }
 };
@@ -41,6 +41,7 @@ const createProduct = async (req, res) => {
         message:"Error al crear el producto desde diccionario",
         code: EErrors.INVALID_TYPES_ERROR
       })
+      req.logger.error(`Error al crear el producto!`);
     }
     const response = await productsService.addProduct(prod, imagesFiles);
     res.send(response);
@@ -77,12 +78,21 @@ const deleteProduct = async (req, res) => {
 
 const createMock = async (req, res) => {
   try {
+    req.logger.warning("Remember to create products only for testing");
+    const enviroment = process.env.ENVIRONMENT
     const response = await productsService.createMock();
+    if (enviroment === "dev") {
+      req.logger.info("Create products for mock : ")
+      req.logger.debug(`Products : ${response}`)
+    } else {
+      req.logger.error("Error create products mocks only test enviroment");
+      throw new Error(`Error products mocks only available for test`);
+    }
     req.logger.info(`Create products for mocks!`);
     res.send(response);
-  } catch (error) {
+  } catch (error)  {
     req.logger.error(`Error in creation products mocks ${error}`)
-    res.status(error.status).send(error.message);
+    res.status(error.status || 500).send(error.message || "Internal Server Error");
   }
 };
 
