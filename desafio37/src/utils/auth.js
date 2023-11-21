@@ -3,7 +3,7 @@ import passport from "passport";
 import config from "../config/config.js";
 
 export const generateToken = (user) => {
-  const token = jwt.sign({ user }, config.privateKeyJwt, { expiresIn: "24h" });
+  const token = jwt.sign({ user }, config.privateKeyJwt, { expiresIn: "1h" });
   return token;
 };
 
