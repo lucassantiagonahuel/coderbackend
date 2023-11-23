@@ -10,6 +10,6 @@ router.post("/", userController.sendEmailResetPassword);
 
 router.put("/", userController.updatePassword);
 
-router.put("/:uid",authorization(["admin"]),userController.updateRole);
+router.put("/premium/:uid",authorization(["admin"]),userController.updateRole);
 
 export default router;
