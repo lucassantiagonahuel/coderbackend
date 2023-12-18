@@ -56,6 +56,8 @@ const initializatePassport = () => {
           if (!isValidPassword(user, password)) {
             return done(null, false);
           }
+          user.last_connection = new Date();
+          const userUpdated = await userModel.findByIdAndUpdate(user._id,user);
           // if (
           //   username == "adminCoder@coder.com" &&
           //   password == "adminCod3r123"
@@ -64,7 +66,7 @@ const initializatePassport = () => {
           // } else {
           //   user.rol = "user";
           // }
-          return done(null, user);
+          return done(null, userUpdated);
         } catch (error) {
           return done(error);
         }

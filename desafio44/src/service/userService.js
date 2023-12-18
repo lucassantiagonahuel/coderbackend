@@ -26,6 +26,9 @@ const getUserById = async (id) => {
 };
 
 const updateRole = async (user, role) => {
+  if (user.status != "completo" && user.role != "premium") {
+    throw new Error("User with incomplete documents");
+  }
   if (role === "user") {
     user.role = "premium";
   } else if (role === "premium") {
@@ -37,9 +40,15 @@ const updateRole = async (user, role) => {
   return response;
 };
 
+const userDocuments = async (user) => {
+  const response = await userClass.userDocuments(user);
+  return response;
+};
+
 export default {
   getUserByEmail,
   updatePassword,
   getUserById,
   updateRole,
+  userDocuments,
 };

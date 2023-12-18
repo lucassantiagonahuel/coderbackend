@@ -1,4 +1,5 @@
 import { generateToken } from "../utils/auth.js";
+import sessionsService from "../service/sessionsService.js";
 
 const register = async (req, res) => {
   req.logger.info(`User registered ok!`);
@@ -38,7 +39,10 @@ const logout = async (req, res) => {
   //   if (error) return res.send("La sesion no se pudo cerrar");
   //   res.redirect("/");
   // });
+  const user = req.user;
+  await sessionsService.updateConnection(user);
   res.clearCookie("coderCookieToken");
+
   res.clearCookie("connect.sid");
   res.redirect("/login");
 };

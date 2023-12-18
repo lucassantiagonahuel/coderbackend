@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploader } from "../utils/utils.js";
+import { uploaderProducts } from "../utils/utils.js";
 import productsController from "../controllers/productsControllers.js";
 import {
   authToken,
@@ -15,7 +15,7 @@ router.get("/:pid", productsController.getProductById);
 
 router.post(
   "/",
-  uploader.array("thumbnails", 5),
+  uploaderProducts.array("thumbnails", 5),
   passportCall("jwt"),
   authorization(["admin","premium"]),
   productsController.createProduct
@@ -23,7 +23,7 @@ router.post(
 
 router.put(
   "/:pid",
-  uploader.array("thumbnails"),
+  uploaderProducts.array("thumbnails"),
   passportCall("jwt"),
   authorization(["admin","premium"]),
   productsController.updateProduct

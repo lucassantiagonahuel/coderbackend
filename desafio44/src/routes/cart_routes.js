@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploader } from "../utils/utils.js";
+import { uploaderProducts } from "../utils/utils.js";
 import {
   authToken,
   authorization,
@@ -25,7 +25,7 @@ router.delete("/:cid/products/:pid", cartsControllers.deleteProductInCart);
 
 router.put(
   "/:cid",
-  uploader.array("thumbnails", 5),
+  uploaderProducts.array("thumbnails", 5),
   cartsControllers.updateCart
 );
 

@@ -1,4 +1,4 @@
-import { urlCreator, sortOrder } from "../../utils/utils.js";
+import { sortOrder } from "../../utils/utils.js";
 import { productModel } from "../models/product.js";
 
 export class ProductClass {

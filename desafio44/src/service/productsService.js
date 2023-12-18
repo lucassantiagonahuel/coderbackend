@@ -1,7 +1,6 @@
 import { ProductManager } from "../dao/manager/managerProducts.js";
 import { ProductClass } from "../dao/class/productsClass.js";
-import __dirname from "../utils/utils.js";
-import { urlCreator } from "../utils/utils.js";
+import __dirname,{ urlCreator } from "../utils/utils.js";
 import { generateProducts } from "../utils/mocks.js";
 
 const dbFolderPath = __dirname + "/../db";
@@ -46,14 +45,14 @@ const getProductById = async (id) => {
 };
 
 const addProduct = async (prod, imagesFiles) => {
-  const urlsCreated = urlCreator(imagesFiles);
+  const urlsCreated = urlCreator(imagesFiles,"products");
   prod.thumbnails = urlsCreated;
   const response = await productMain.addProduct(prod);
   return response;
 };
 
 const updateProduct = async (idProd, prodUpgrade, imagesFiles) => {
-  const urlsCreated = urlCreator(imagesFiles);
+  const urlsCreated = urlCreator(imagesFiles,"products");
   prodUpgrade.thumbnails = urlsCreated;
   const response = await productMain.updateProduct(idProd, prodUpgrade);
   return response;

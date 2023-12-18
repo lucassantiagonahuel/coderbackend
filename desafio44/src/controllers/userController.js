@@ -1,6 +1,7 @@
 import userService from "../service/userService.js";
 import { generateToken, verifyToken } from "../utils/auth.js";
 import MailingService from "../service/mailingService.js";
+import { urlCreator } from "../utils/utils.js";
 
 const emailService = new MailingService();
 
@@ -51,9 +52,52 @@ const updateRole = async (req, res) => {
   }
 };
 
+const sendDocumentsUser = async (req, res) => {
+  try {
+    const identificacion = req.files["identificacion"]?.[0] || null;
+    const domicilio = req.files["domicilio"]?.[0] || null;
+    const estadoDeCuenta = req.files["estadoDeCuenta"]?.[0] || null;
+    const userId = req.params.uid;
+    const user = await userService.getUserById(userId);
+    const docs = [];
+    if (identificacion) {
+      const linkReference = urlCreator(
+        req.files["identificacion"],
+        "documents"
+      );
+      docs.push({ name: "identificacion", reference: linkReference[0] });
+    }
+    if (domicilio) {
+      const linkReference = urlCreator(req.files["domicilio"], "documents");
+      docs.push({ name: "domicilio", reference: linkReference[0] });
+    }
+    if (estadoDeCuenta) {
+      const linkReference = urlCreator(
+        req.files["estadoDeCuenta"],
+        "documents"
+      );
+      docs.push({
+        name: "estadoDeCuenta",
+        reference: linkReference[0],
+      });
+    }
+    if (docs.length === 3) {
+      user.status = "completo";
+    } else {
+      user.status = "incompleto";
+    }
+    user.documents = docs;
+    const response = await userService.userDocuments(user);
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
 export default {
   getUserByEmail,
   sendEmailResetPassword,
   updatePassword,
   updateRole,
+  sendDocumentsUser,
 };

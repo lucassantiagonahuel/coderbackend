@@ -23,4 +23,12 @@ export class UserClass {
     const response = await userModel.updateOne({ _id: user._id }, user);
     return response;
   };
+
+  userDocuments = async (user) => {
+    const response = await userModel.findOneAndUpdate(
+      { email: user.email },
+      user
+    );
+    return response;
+  };
 }
