@@ -21,7 +21,10 @@
       <button
         onclick="addToCart(`{{product._id}}`, document.getElementById('quantity').value)"
         data-product-id="{{product._id}}"
+        data-cart-id="{{cartId}}"
+        class="add-to-cart-button"
       >Agregar al carrito</button>
+    <a href="/cart/{{../../body.dataset.cartId}}" class="go-to-cart-button" style="display: none;"><button>Ir al carrito</button></a>
     </li>
   </ul>
   <a href="javascript:history.back()"><button>Volver atrás</button></a>

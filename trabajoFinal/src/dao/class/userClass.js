@@ -6,6 +6,11 @@ export class UserClass {
     return user;
   };
 
+  getUsers = async () => {
+    const users = await userModel.find();
+    return users;
+  };
+
   updateUserPassword = async (user) => {
     const response = await userModel.findOneAndUpdate(
       { email: user.email },
@@ -29,6 +34,20 @@ export class UserClass {
       { email: user.email },
       user
     );
+    return response;
+  };
+
+  getUserInactives = async (timerOut) => {
+    const usersInactives = await userModel.find({
+      last_connection: { $lt: timerOut },
+    });
+    return usersInactives;
+  };
+
+  deleteUsersInactive = async (timerOut) => {
+    const response = await userModel.deleteMany({
+      last_connection: { $lt: timerOut },
+    });
     return response;
   };
 }

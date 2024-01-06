@@ -2,6 +2,7 @@ import userService from "../service/userService.js";
 import { generateToken, verifyToken } from "../utils/auth.js";
 import MailingService from "../service/mailingService.js";
 import { urlCreator } from "../utils/utils.js";
+import UsersDTO from "../dao/DTO/users.js";
 
 const emailService = new MailingService();
 
@@ -10,6 +11,16 @@ const getUserByEmail = async (req, res) => {
     const email = req.params.email;
     const user = await userService.getUserByEmail(email);
     res.send(user);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const users = await userService.getUsers();
+    const userDTO = new UsersDTO(users);
+    res.send(userDTO);
   } catch (error) {
     res.status(500).send(error.message);
   }
@@ -94,10 +105,21 @@ const sendDocumentsUser = async (req, res) => {
   }
 };
 
+const deleteUsersInactive = async (req, res) => {
+  try {
+    const response = await userService.deleteUsersInactive();
+    res.send(response);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
 export default {
   getUserByEmail,
+  getUsers,
   sendEmailResetPassword,
   updatePassword,
   updateRole,
   sendDocumentsUser,
+  deleteUsersInactive,
 };

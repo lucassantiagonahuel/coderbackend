@@ -2,7 +2,7 @@ import express from "express";
 import handlebars from "express-handlebars";
 import productsRouter from "./routes/products_routes.js";
 import cartRouter from "./routes/cart_routes.js";
-import userRouter from "./routes/user_routes.js"
+import userRouter from "./routes/user_routes.js";
 import viewsRouter from "./routes/views_routes.js";
 import sessionsRouter from "./routes/sessions_routes.js";
 import path from "path";
@@ -24,7 +24,6 @@ const __dirname = path.dirname(__filename);
 const publicPath = path.join(__dirname, "public");
 const specs = swaggerJsdoc(swaggerOptions);
 
-//Se creará una instancia de express
 const app = express();
 app.engine("handlebars", handlebars.engine());
 app.set("views", __dirname + "/views");
@@ -34,17 +33,25 @@ app.use(express.json());
 app.use("/static", express.static(publicPath));
 app.use(cookieParser());
 app.use(addLogger);
-app.use('/apidocs',swaggerUiExpress.serve,swaggerUiExpress.setup(specs));
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
-app.use(session({
+app.use(
+  session({
     store: MongoStore.create({
-        mongoUrl: config.mongoUrl,
-        ttl: 200000
+      mongoUrl: config.mongoUrl,
+      ttl: 200000,
     }),
     secret: "EcommerceSecret",
-    resave:false,
-    saveUninitialized:false
-}));
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use((req, res, next) => {
+  if (req.originalUrl === "/") {
+    return res.redirect("/login");
+  }
+  next();
+});
 
 initializatePassport();
 app.use(passport.initialize());
@@ -52,10 +59,9 @@ app.use(passport.session());
 
 app.use("/api/products", productsRouter);
 app.use("/api/carts", cartRouter);
-app.use("/api/users",userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/", viewsRouter);
-
 
 const httpServer = app.listen(config.port, () => console.log("Server ON!"));
 

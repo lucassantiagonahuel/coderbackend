@@ -1,11 +1,18 @@
 import { UserClass } from "../dao/class/userClass.js";
 import { createHash, isValidPassword } from "../utils/utils.js";
+import MailingService from "./mailingService.js";
 
 let userClass = new UserClass();
+const emailService = new MailingService();
 
 const getUserByEmail = async (email) => {
   const user = await userClass.getUserByEmail(email);
   return user;
+};
+
+const getUsers = async () => {
+  const users = await userClass.getUsers();
+  return users;
 };
 
 const updatePassword = async (user, newPassword) => {
@@ -45,10 +52,22 @@ const userDocuments = async (user) => {
   return response;
 };
 
+const deleteUsersInactive = async () => {
+  const timerOut = new Date(Date.now() - 10 * 60 * 1000);
+  const usersInactives = await userClass.getUserInactives(timerOut);
+  const response = await userClass.deleteUsersInactive(timerOut);
+  for (const user of usersInactives) {
+    await emailService.sendEmailDeletedUser(user.email);
+  }
+  return response;
+};
+
 export default {
   getUserByEmail,
+  getUsers,
   updatePassword,
   getUserById,
   updateRole,
   userDocuments,
+  deleteUsersInactive,
 };

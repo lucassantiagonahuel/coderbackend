@@ -4,6 +4,7 @@ import cartsService from "../service/cartsService.js";
 import UserDTO from "../dao/DTO/user.js";
 import { verifyToken } from "../utils/auth.js";
 import jwt from "jsonwebtoken";
+import userService from "../service/userService.js";
 
 const getAllProducts = async (req, res) => {
   const response = await productsService.getProducts();
@@ -29,14 +30,28 @@ const getListProducts = async (req, res) => {
   const productsParse = products.map((product) => product.toObject());
   const user = req.user;
 
-  res.render("products", {
-    products: productsParse,
-    hasPrevPage,
-    hasNextPage,
-    prevLink,
-    nextLink,
-    user,
-  });
+  if (user.user.role == "admin") {
+    const users = await userService.getUsers();
+    const usersParse = users.map((user) => user.toObject());
+    res.render("fullViewAdmin", {
+      products: productsParse,
+      hasPrevPage,
+      hasNextPage,
+      prevLink,
+      nextLink,
+      user,
+      users: usersParse,
+    });
+  } else {
+    res.render("products", {
+      products: productsParse,
+      hasPrevPage,
+      hasNextPage,
+      prevLink,
+      nextLink,
+      user,
+    });
+  }
 };
 
 const getCart = async (req, res) => {
@@ -84,7 +99,7 @@ const changePassword = async (req, res) => {
     const validToken = await verifyToken(token);
     console.log("VALID TOKEN :");
     console.log(validToken);
-    res.render("changePassword", {token});
+    res.render("changePassword", { token });
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       console.error("El token ha expirado");

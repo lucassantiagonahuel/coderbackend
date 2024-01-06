@@ -17,6 +17,22 @@ router.put(
   userController.updateRole
 );
 
-router.post("/:uid/documents", uploaderDocuments.fields([{name:"identificacion",maxCount:1}, {name:"domicilio",maxCount:1},{name:"estadoDeCuenta",maxCount:1}]), userController.sendDocumentsUser);
+router.post(
+  "/:uid/documents",
+  uploaderDocuments.fields([
+    { name: "identificacion", maxCount: 1 },
+    { name: "domicilio", maxCount: 1 },
+    { name: "estadoDeCuenta", maxCount: 1 },
+  ]),
+  userController.sendDocumentsUser
+);
+
+router.get("/", authorization(["admin"]), userController.getUsers);
+
+router.delete(
+  "/",
+  authorization(["admin"]),
+  userController.deleteUsersInactive
+);
 
 export default router;

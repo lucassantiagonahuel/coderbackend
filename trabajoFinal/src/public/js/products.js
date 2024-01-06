@@ -9,7 +9,18 @@ const addToCart = async (productId, quantity) => {
   });
   const cartData = await response.json();
   const cartId = cartData._id;
-  console.log('Carrito creado con _id:', cartId);
+  console.log("Carrito creado con _id:", cartId);
+
+  const addToCartButton = document.querySelector(
+    "[data-product-id='" + productId + "']"
+  );
+  const goToCartButton = document.querySelector(".go-to-cart-button");
+
+
+  goToCartButton.style.display = "block";
+  goToCartButton.href = `/cart/${cartId}`;
+  addToCartButton.dataset.cartId = cartId;
+
   const responseTwo = await fetch(`/api/carts/${cartId}/product/${productId}`, {
     method: "POST",
     headers: {
@@ -21,12 +32,12 @@ const addToCart = async (productId, quantity) => {
     const data = {
       quantity: quantity,
     };
-    const responses = await fetch(`/api/carts/${cartId}/products/${productId}`, {
+    await fetch(`/api/carts/${cartId}/products/${productId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data), 
+      body: JSON.stringify(data),
     });
   }
 };

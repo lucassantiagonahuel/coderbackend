@@ -35,4 +35,36 @@ export default class MailingService {
       throw error;
     }
   };
+
+  sendEmailDeletedUser = async (email) => {
+    try {
+      let result = await this.client.sendMail({
+        from: config.userEmail,
+        to: email,
+        subject: "Usuario eliminado",
+        html: `<p>Le enviamos este correo para informarle que su usuario fue eliminado por inactividad en nuestra plataforma.</p>`,
+      });
+      return result;
+    } catch (error) {
+      console.error("Error al enviar el correo electrónico:", error);
+      throw error;
+    }
+  };
+
+  sendEmailDeletedProduct = async (email,id) => {
+    try {
+      console.log(email);
+      console.log(id);
+      let result = await this.client.sendMail({
+        from: config.userEmail,
+        to: email,
+        subject: "Producto eliminado",
+        html: `<p>Le enviamos este correo para informarle que su producto ${id} fue eliminado de la plataforma.</p>`,
+      });
+      return result;
+    } catch (error) {
+      console.error("Error al enviar el correo electrónico:", error);
+      throw error;
+    }
+  };
 }

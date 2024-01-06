@@ -5,7 +5,7 @@ import jwt from "passport-jwt";
 import { userModel } from "../dao/models/user.js";
 import { createHash, isValidPassword } from "../utils/utils.js";
 import { cookieExtractor } from "../utils/auth.js";
-import config from "../config/config.js"
+import config from "../config/config.js";
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
@@ -16,12 +16,12 @@ const initializatePassport = () => {
     new LocalStrategy(
       { passReqToCallback: true, usernameField: "email" },
       async (req, username, password, done) => {
-        const { first_name, last_name, email, age, cart, role = user } = req.body;
+        const { first_name, last_name, email, age, cart, role } = req.body;
         try {
           let user = await userModel.findOne({ email: username });
           if (user) {
             console.log("User already exists");
-            return done(null, false,{message:"User already exists"});
+            return done(null, false, { message: "User already exists" });
           }
           const newUser = {
             first_name,
@@ -29,7 +29,7 @@ const initializatePassport = () => {
             email,
             age,
             cart,
-            role ,
+            role: role || "user",
             password: createHash(password),
           };
 
@@ -51,13 +51,13 @@ const initializatePassport = () => {
           const user = await userModel.findOne({ email: username });
           if (!user) {
             console.log("User doesn't exist");
-            return done(null, false,{message:"User doesn't exist"});
+            return done(null, false, { message: "User doesn't exist" });
           }
           if (!isValidPassword(user, password)) {
             return done(null, false);
           }
           user.last_connection = new Date();
-          const userUpdated = await userModel.findByIdAndUpdate(user._id,user);
+          const userUpdated = await userModel.findByIdAndUpdate(user._id, user);
           // if (
           //   username == "adminCoder@coder.com" &&
           //   password == "adminCod3r123"
